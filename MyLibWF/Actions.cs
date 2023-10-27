@@ -7,8 +7,8 @@ namespace MyLibWF
 {
   public static class ActionsWF
   {
-    public const double fromTop = 30, fromLeft = 60;
-    public static Size size = new Size(40, 20);
+    const double fromTop = 30, fromLeft = 60;
+    static Size size = new Size(40, 20);
     public static List<TextBox> textBoxes = new List<TextBox>();
     public static List<Label> labels = new List<Label>();
 
@@ -226,7 +226,7 @@ namespace MyLibWF
         MessageBox.Show("Массив пока не инициализирован.", "Ошибка");
     }
 
-    private static void OneDimSubPrint(int temp, int x, TextBox text, int[] y)
+    static void OneDimSubPrint(int temp, int x, TextBox text, int[] y)
     {
       for (int i = temp; i < temp + x; i++)
         text.Text += y[i] + " ";
@@ -342,7 +342,7 @@ namespace MyLibWF
       return fileContent;
     }
 
-    public static bool Qualifier(string text, int[] x)
+    public static bool IsFileCorrect(string text, int[] x)
     {
       string[] arrStrings = text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
       if (arrStrings.Length == 1)
@@ -350,7 +350,7 @@ namespace MyLibWF
       return false;
     }
 
-    public static bool Qualifier(string text, int[,] x)
+    public static bool IsFileCorrect(string text, int[,] x)
     {
       string[] arrStrings = text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
       int length = 0, lastLength = 0;
@@ -368,7 +368,7 @@ namespace MyLibWF
       return false;
     }
 
-    public static bool Qualifier(string text, int[][] x)
+    public static bool IsFileCorrect(string text, int[][] x)
     {
       string[] arrStrings = text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
       int length, lastLength = 0;
@@ -384,7 +384,7 @@ namespace MyLibWF
       return false;
     }
 
-    private static void FileInit(string path)
+    static void FileInit(string path)
     {
       if (!File.Exists(path))
       {
@@ -395,7 +395,7 @@ namespace MyLibWF
         File.WriteAllText(path, string.Empty);
     }
 
-    public static void FullSaver(int[] array)
+    public static void Saver(int[] array)
     {
       string path = "One Dimensional Array.txt";
       FileInit(path);
@@ -411,7 +411,7 @@ namespace MyLibWF
       MessageBox.Show("Массив записан");
     }
 
-    public static void FullSaver(int[,] array)
+    public static void Saver(int[,] array)
     {
       string path = "Two Dimensional Array.txt";
       FileInit(path);
@@ -428,7 +428,7 @@ namespace MyLibWF
       MessageBox.Show("Массив записан");
     }
 
-    public static void FullSaver(int[][] array)
+    public static void Saver(int[][] array)
     {
       string path = "Torn Array.txt";
       FileInit(path);
