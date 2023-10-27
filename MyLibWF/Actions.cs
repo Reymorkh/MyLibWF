@@ -11,6 +11,38 @@ namespace MyLibWF
     public static Size size = new Size(40, 20);
     public static List<TextBox> textBoxes = new List<TextBox>();
     public static List<Label> labels = new List<Label>();
+
+    static int Partition(int[] array, int minIndex, int maxIndex)
+    {
+      var pen = minIndex - 1;
+      for (var i = minIndex; i < maxIndex; i++)
+      {
+        if (array[i] > array[maxIndex])
+        {
+          pen++;
+          (array[pen], array[i]) = (array[i],array[pen]);
+        }
+      }
+
+      pen++;
+      (array[pen], array[maxIndex]) = (array[maxIndex], array[pen]);
+      return pen;
+    }
+
+    public static int[] HoarahSort(int[] array, int indexLeft, int indexRight)
+    {
+      if (indexLeft >= indexRight)
+      {
+        return array; //финальная сдача массива
+      }
+
+      var pivotIndex = Partition(array, indexLeft, indexRight); // определение опорного элемента в массиве и перестановка
+      HoarahSort(array, indexLeft, pivotIndex - 1); // сорт по краям от опорного элемента
+      HoarahSort(array, pivotIndex + 1, indexRight); // сорт по краям от опорного элемента
+
+      return array;
+    }
+
     public static void FormInit(Form form)
     {
       form.ShowDialog();
@@ -18,6 +50,7 @@ namespace MyLibWF
       textBoxes.Clear();
       labels.Clear();
     }
+
     public static void AddBox(double posx, double posy)
     {
       TextBox newTextBox = new TextBox();
@@ -408,8 +441,8 @@ namespace MyLibWF
           else
             file.WriteLine(array[i][j]);
       }
-    file.Close();
-    MessageBox.Show("Массив записан");
+      file.Close();
+      MessageBox.Show("Массив записан");
     }
 
     public static int Loader(string fileContent, ref int[] arrayMain)
