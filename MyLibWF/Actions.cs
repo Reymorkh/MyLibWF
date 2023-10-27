@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using static System.Windows.Forms.DataFormats;
 
@@ -7,18 +8,21 @@ namespace MyLibWF
   public static class ActionsWF
   {
     public const double fromTop = 30, fromLeft = 60;
-    public static int tabindex = 8;
     public static Size size = new Size(40, 20);
     public static List<TextBox> textBoxes = new List<TextBox>();
     public static List<Label> labels = new List<Label>();
-
+    public static void FormInit(Form form)
+    {
+      form.ShowDialog();
+      form.Dispose();
+      textBoxes.Clear();
+      labels.Clear();
+    }
     public static void AddBox(double posx, double posy)
     {
       TextBox newTextBox = new TextBox();
       newTextBox.Location = new Point(40 + Convert.ToInt32(Math.Round(fromLeft * posx, 0)), 60 + Convert.ToInt32(Math.Round(fromTop * posy, 0)));
       newTextBox.Size = size;
-      newTextBox.TabIndex = tabindex;
-      tabindex++;
       newTextBox.MaxLength = 5;
       newTextBox.TextAlign = HorizontalAlignment.Center;
       textBoxes.Add(newTextBox);
@@ -42,8 +46,7 @@ namespace MyLibWF
         AddBox(i, 0);
         AddLabel(i, -0.8, i + 1);
       }
-      TtB(x);
-      tabindex = 8;
+      TextToBoxes(x);
     }
 
     public static void Print(int[,] x)
@@ -56,8 +59,7 @@ namespace MyLibWF
       }
       for (int i = 0; i < x.GetLength(1); i++) //принтит номера столбцов
         AddLabel(i, -0.8, i + 1);
-      TtB(x);
-      tabindex = 8;
+      TextToBoxes(x);
     }
 
     public static void Print(int[][] x)
@@ -73,13 +75,12 @@ namespace MyLibWF
       }
       for (int i = 0; i < length; i++)
         AddLabel(i, -0.8, i + 1);
-      TtB(x);
-      tabindex = 8;
+      TextToBoxes(x);
     }
 
-    public static void TtB(int[] x)
+    public static void TextToBoxes(int[] x)
     {
-      int j, boxIndex = 0, temp;
+      int boxIndex = 0;
       for (int i = 0; i < x.Length; i++)
       {
         if (x[i] != 0)
@@ -88,9 +89,9 @@ namespace MyLibWF
       }
     }
 
-    public static void TtB(int[,] x)
+    public static void TextToBoxes(int[,] x)
     {
-      int j, boxIndex = 0, temp;
+      int j, boxIndex = 0;
       for (int i = 0; i < x.GetLength(0); i++)
       {
         for (j = 0; j < x.GetLength(1); j++)
@@ -102,9 +103,9 @@ namespace MyLibWF
       }
     }
 
-    public static void TtB(int[][] x)
+    public static void TextToBoxes(int[][] x)
     {
-      int boxIndex = 0, temp;
+      int boxIndex = 0;
       for (int i = 0; i < x.Length; i++)
       {
         for (int j = 0; j < x[i].Length; j++)
@@ -115,9 +116,9 @@ namespace MyLibWF
         }
       }
     }
-    public static int[] BtA(int[] x)
+    public static int[] BoxesToArray(int[] x)
     {
-      int j, boxIndex = 0, temp;
+      int boxIndex = 0;
       for (int i = 0; i < x.Length; i++)
       {
         if (x[i] != 0)
@@ -127,7 +128,7 @@ namespace MyLibWF
       return x;
     }
 
-    public static int[,] BtA(int[,] x)
+    public static int[,] BoxesToArray(int[,] x)
     {
       int j, boxIndex = 0, temp;
       for (int i = 0; i < x.GetLength(0); i++)
@@ -143,7 +144,7 @@ namespace MyLibWF
       }
       return x;
     }
-    public static int[][] BtA(int[][] x)
+    public static int[][] BoxesToArray(int[][] x)
     {
       int boxIndex = 0, temp;
       for (int i = 0; i < x.Length; i++)
@@ -162,7 +163,7 @@ namespace MyLibWF
 
     public static void BoxPrint(bool check, TextBox text, int[] x)
     {
-        text.Text = "Одномерный массив:";
+      text.Text = "Одномерный массив:";
       if (check)
       {
         int temp = 0;
@@ -226,6 +227,249 @@ namespace MyLibWF
       }
       else
         MessageBox.Show("Массив не инициализирован.", "Ошибка");
+    }
+    public static int[] Task1(int[] x, ref bool check, TextBox text)
+    {
+      int i;
+      for (i = 0; i < x.Length; i++)
+        if (x[i] != 0)
+          if (x[i] % 2 == 0)
+          {
+            x[i] = 0;
+            for (i += 1; i < x.Length; i++)
+              (x[i - 1], x[i]) = (x[i], x[i - 1]);
+            if (x.Length == 1)
+              check = false;
+            Array.Resize(ref x, x.Length - 1);
+            BoxPrint(check, text, x);
+            break;
+          }
+      if (i == x.Length)
+        MessageBox.Show("Чётных чисел не осталось.", "Предупрежедение");
+      return x;
+    }
+    public static int[,] Task2(int[,] x, int lineNumber)
+    {
+      lineNumber -= 1;
+      int index1 = x.GetLength(0), index2 = x.GetLength(1), z = 0;
+      int[,] temp = new int[index1 + 1, index2];
+      for (int i = 0; i < index1; i++) //i - строки, j - содержимое строк
+      {
+        if (z == lineNumber)
+          z++;
+        for (int j = 0; j < index2; j++)
+        {
+          temp[z, j] = x[i, j];
+        }
+        if (z == lineNumber)
+          z++;
+        z++;
+      }
+      return temp;
+    }
+
+    public static int[][] Task3(int[][] arrayMain, int idx)
+    {
+      int[][] arrayTemp = new int[arrayMain.Length - 1][];
+      int k = 0;
+      for (int i = 0; i < arrayMain.Length; i++)
+      {
+        if (i != idx)
+          arrayTemp[k++] = arrayMain[i];
+      }
+      return arrayTemp;
+    }
+
+    public static string FileReader()
+    {
+      var fileContent = string.Empty;
+      var filePath = string.Empty;
+
+      using (OpenFileDialog openFileDialog = new OpenFileDialog())
+      {
+        openFileDialog.InitialDirectory = "E:\\stuff\\Проекты VS\\Лабораторная работа №5\\Лабораторная работа №5\\bin\\Debug\\net7.0-windows";
+        openFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+        openFileDialog.FilterIndex = 2;
+        openFileDialog.RestoreDirectory = true;
+
+        if (openFileDialog.ShowDialog() == DialogResult.OK)
+        {
+          filePath = openFileDialog.FileName;
+          var fileStream = openFileDialog.OpenFile();
+          using (StreamReader reader = new StreamReader(fileStream))
+          {
+            fileContent = reader.ReadToEnd();
+          }
+        }
+      }
+      return fileContent;
+    }
+
+    public static bool Qualifier(string text, int[] x)
+    {
+      string[] arrStrings = text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+      if (arrStrings.Length == 1)
+        return true;
+      return false;
+    }
+
+    public static bool Qualifier(string text, int[,] x)
+    {
+      string[] arrStrings = text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+      int length = 0, lastLength = 0;
+      foreach (string s in arrStrings)
+      {
+        string[] temp = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        length = temp.Length;
+        if (Array.IndexOf(arrStrings, s) == 0) //Чтобы в самом начале приравнять последнюю длину к длине
+          lastLength = length;
+        if (length != lastLength)
+          return false;
+      }
+      if (length == lastLength)
+        return true;
+      return false;
+    }
+
+    public static bool Qualifier(string text, int[][] x)
+    {
+      string[] arrStrings = text.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+      int length, lastLength = 0;
+      foreach (string s in arrStrings)
+      {
+        string[] temp = s.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        length = temp.Length;
+        if (Array.IndexOf(arrStrings, s) == 0) //Чтобы в самом начале приравнять последнюю длину к длине
+          lastLength = length;
+        if (length != lastLength)
+          return true;
+      }
+      return false;
+    }
+
+    private static void FileInit(string path)
+    {
+      if (!File.Exists(path))
+      {
+        var fie = File.Create(path);
+        fie.Close();
+      }
+      else
+        File.WriteAllText(path, string.Empty);
+    }
+
+    public static void FullSaver(int[] array)
+    {
+      string path = "One Dimensional Array.txt";
+      FileInit(path);
+      StreamWriter file = new StreamWriter(path);
+      for (int i = 0; i < array.Length; i++)
+      {
+        if (i != array.Length - 1)
+          file.Write(array[i] + " ");
+        else
+          file.Write(array[i]);
+      }
+      file.Close();
+      MessageBox.Show("Массив записан");
+    }
+
+    public static void FullSaver(int[,] array)
+    {
+      string path = "Two Dimensional Array.txt";
+      FileInit(path);
+      StreamWriter file = new StreamWriter(path);
+      for (int i = 0; i < array.GetLength(0); i++)
+      {
+        for (int j = 0; j < array.GetLength(1); j++)
+          if (j != array.GetLength(1) - 1)
+            file.Write(array[i, j] + " ");
+          else
+            file.WriteLine(array[i, j]);
+      }
+      file.Close();
+      MessageBox.Show("Массив записан");
+    }
+
+    public static void FullSaver(int[][] array)
+    {
+      string path = "Torn Array.txt";
+      FileInit(path);
+      StreamWriter file = new StreamWriter(path);
+      for (int i = 0; i < array.Length; i++)
+      {
+        for (int j = 0; j < array[i].Length; j++)
+          if (j != array[i].Length - 1)
+            file.Write(array[i][j] + " ");
+          else
+            file.WriteLine(array[i][j]);
+      }
+    file.Close();
+    MessageBox.Show("Массив записан");
+    }
+
+    public static int Loader(string fileContent, ref int[] arrayMain)
+    {
+      int errorNumber = 0;
+      string[] contentLines = fileContent.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+      int[] arrayLocal = new int[contentLines.Length];
+      for (int i = 0; i < contentLines.Length; i++)
+      {
+        int x;
+        if (int.TryParse(contentLines[i], out x))
+          arrayLocal[i] = x;
+        else
+          errorNumber++;
+      }
+      arrayMain = arrayLocal;
+      return errorNumber;
+    }
+
+    public static int Loader(string fileContent, ref int[,] arrayMain)
+    {
+      int errorNumber = 0;
+      string[] contentLines = fileContent.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+      string[] contentColumns = contentLines[0].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+      int[,] arrayLocal = new int[contentLines.Length, contentColumns.Length];
+
+      for (int i = 0; i < contentLines.Length; i++)
+      {
+        contentColumns = contentLines[i].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        for (int j = 0; j < contentColumns.Length; j++)
+        {
+          int x;
+          if (int.TryParse(contentColumns[j], out x))
+            arrayLocal[i, j] = x;
+          else
+            errorNumber++;
+        }
+      }
+      arrayMain = arrayLocal;
+      return errorNumber;
+    }
+
+    public static int Loader(string fileContent, ref int[][] arrayMain)
+    {
+      int errorNumber = 0;
+      string[] lineNumber = fileContent.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+      string[] columnNubmer;
+      int[][] arrayLocal = new int[lineNumber.Length][];
+      for (int i = 0; i < lineNumber.Length; i++)
+      {
+        columnNubmer = lineNumber[i].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+        arrayLocal[i] = new int[columnNubmer.Length];
+        for (int j = 0; j < arrayLocal[i].Length; j++)
+        {
+          int x;
+          if (int.TryParse(columnNubmer[j], out x))
+            arrayLocal[i][j] = x;
+          else
+            errorNumber++;
+        }
+      }
+      arrayMain = arrayLocal;
+      return errorNumber;
     }
   }
 }
