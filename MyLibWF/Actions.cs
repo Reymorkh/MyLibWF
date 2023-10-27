@@ -116,6 +116,7 @@ namespace MyLibWF
         }
       }
     }
+
     public static int[] BoxesToArray(int[] x)
     {
       int boxIndex = 0;
@@ -144,6 +145,7 @@ namespace MyLibWF
       }
       return x;
     }
+
     public static int[][] BoxesToArray(int[][] x)
     {
       int boxIndex = 0, temp;
@@ -228,6 +230,7 @@ namespace MyLibWF
       else
         MessageBox.Show("Массив не инициализирован.", "Ошибка");
     }
+
     public static int[] Task1(int[] x, ref bool check, TextBox text)
     {
       int i;
@@ -248,6 +251,7 @@ namespace MyLibWF
         MessageBox.Show("Чётных чисел не осталось.", "Предупрежедение");
       return x;
     }
+
     public static int[,] Task2(int[,] x, int lineNumber)
     {
       lineNumber -= 1;
