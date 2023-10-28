@@ -508,5 +508,34 @@ namespace MyLibWF
       arrayMain = arrayLocal;
       return errorNumber;
     }
+
+    public static int[] ArrayCopy(int[] array)
+    {
+      int[] arrayLocal = new int[array.Length];
+      for (int i = 0;i < array.Length; i++)
+        arrayLocal[i] = array[i];
+      return arrayLocal;
+    }
+
+    public static int[,] ArrayCopy(int[,] array)
+    {
+      int[,] arrayLocal = new int[array.GetLength(0), array.GetLength(1)];
+      for (int i = 0; i < array.GetLength(0); i++)
+        for (int j= 0; j < array.GetLength(1); j++)
+        arrayLocal[i,j] = array[i,j];
+      return arrayLocal;
+    }
+
+    public static int[][] ArrayCopy(int[][] array)
+    {
+      int[][] arrayLocal = new int[array.Length][];
+      for (int i = 0; i < array.Length; i++)
+      {
+        arrayLocal[i] = new int[array[i].Length];
+        for (int j = 0; j < array[i].Length; j++)
+          arrayLocal[i][j] = array[i][j];
+      }
+      return arrayLocal;
+    }
   }
 }
